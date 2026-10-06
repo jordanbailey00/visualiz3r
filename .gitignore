@@ -8,3 +8,5 @@ playwright-report/
 .archive/
 .screenshots/
 __pycache__/
+.vercel
+.env*
