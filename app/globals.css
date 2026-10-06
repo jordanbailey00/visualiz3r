@@ -1,0 +1,189 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, monospace;
+
+  --color-ink-950: #05070b;
+  --color-ink-900: #0a0d13;
+  --color-ink-850: #0e121a;
+  --color-ink-800: #131824;
+  --color-ink-700: #1c2333;
+  --color-ink-600: #2a3346;
+  --color-ink-500: #3b465d;
+  --color-ink-400: #5d6880;
+  --color-ink-300: #8a94aa;
+  --color-ink-200: #b7bfd0;
+  --color-ink-100: #dfe4ee;
+  --color-ink-50: #f3f5f9;
+
+  --color-hw: #38bdf8;
+  --color-hw-soft: #0c4a6e;
+  --color-llm: #a78bfa;
+  --color-llm-soft: #3b2a6b;
+  --color-warm: #fbbf24;
+  --color-pos: #f97316;
+  --color-neg: #3b82f6;
+
+  --shadow-panel: 0 18px 50px -12px rgb(0 0 0 / 0.65), 0 0 0 1px rgb(255 255 255 / 0.06);
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--color-ink-950);
+  color: var(--color-ink-100);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: rgb(56 189 248 / 0.35);
+}
+
+@layer components {
+  /* Floating glass panel used for all overlays on top of 3D canvases. */
+  .panel {
+    background: linear-gradient(180deg, rgb(19 24 36 / 0.86), rgb(12 15 22 / 0.86));
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border-radius: 14px;
+    box-shadow: var(--shadow-panel);
+  }
+
+  .panel-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(255 255 255 / 0.14) transparent;
+  }
+
+  .kbd {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1;
+    padding: 3px 5px;
+    border-radius: 5px;
+    background: rgb(255 255 255 / 0.06);
+    box-shadow: inset 0 -1px 0 rgb(255 255 255 / 0.08);
+    color: var(--color-ink-200);
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 999px;
+    padding: 2px 9px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 34px;
+    padding: 0 12px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-ink-100);
+    background: rgb(255 255 255 / 0.05);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.07);
+    transition:
+      background 120ms ease,
+      box-shadow 120ms ease,
+      color 120ms ease;
+  }
+  .btn:hover {
+    background: rgb(255 255 255 / 0.09);
+  }
+  .btn:focus-visible {
+    outline: 2px solid var(--color-hw);
+    outline-offset: 2px;
+  }
+  .btn[data-active="true"] {
+    background: rgb(56 189 248 / 0.16);
+    box-shadow: inset 0 0 0 1px rgb(56 189 248 / 0.45);
+    color: #e0f2fe;
+  }
+  .btn-icon {
+    width: 34px;
+    padding: 0;
+  }
+
+  .prose-panel p + p {
+    margin-top: 0.7em;
+  }
+  .prose-panel strong {
+    color: var(--color-ink-50);
+    font-weight: 600;
+  }
+  .prose-panel code {
+    font-family: var(--font-mono);
+    font-size: 0.86em;
+    padding: 1px 5px;
+    border-radius: 5px;
+    background: rgb(255 255 255 / 0.07);
+    color: var(--color-ink-50);
+  }
+}
+
+/* Range input styled for the dark UI. */
+input[type="range"].slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--slider-fill, var(--color-hw)) 0%,
+    var(--slider-fill, var(--color-hw)) var(--slider-pct, 0%),
+    rgb(255 255 255 / 0.12) var(--slider-pct, 0%)
+  );
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"].slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #f8fafc;
+  box-shadow:
+    0 0 0 3px rgb(0 0 0 / 0.35),
+    0 2px 8px rgb(0 0 0 / 0.5);
+}
+input[type="range"].slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: none;
+  border-radius: 50%;
+  background: #f8fafc;
+  box-shadow:
+    0 0 0 3px rgb(0 0 0 / 0.35),
+    0 2px 8px rgb(0 0 0 / 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Presentation mode: press H (or open with ?clean) to hide all UI chrome. */
+html.ui-hidden .ui-chrome {
+  display: none !important;
+}

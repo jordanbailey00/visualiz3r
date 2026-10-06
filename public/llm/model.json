@@ -1,0 +1,348 @@
+{
+ "config": {
+  "vocab_size": 2048,
+  "d_model": 64,
+  "n_layers": 4,
+  "n_heads": 4,
+  "d_head": 16,
+  "d_ff": 256,
+  "max_seq_len": 128,
+  "rope_theta": 10000.0,
+  "norm_eps": 1e-05,
+  "tied_embeddings": true
+ },
+ "tensors": [
+  {
+   "name": "tok_emb",
+   "shape": [2048,64],
+   "dtype": "float32",
+   "offset": 0,
+   "length": 131072
+  },
+  {
+   "name": "layers.0.attn_norm",
+   "shape": [64],
+   "dtype": "float32",
+   "offset": 524288,
+   "length": 64
+  },
+  {
+   "name": "layers.0.wq",
+   "shape": [64,64],
+   "dtype": "float32",
+   "offset": 524544,
+   "length": 4096
+  },
+  {
+   "name": "layers.0.wk",
+   "shape": [64,64],
+   "dtype": "float32",
+   "offset": 540928,
+   "length": 4096
+  },
+  {
+   "name": "layers.0.wv",
+   "shape": [64,64],
+   "dtype": "float32",
+   "offset": 557312,
+   "length": 4096
+  },
+  {
+   "name": "layers.0.wo",
+   "shape": [64,64],
+   "dtype": "float32",
+   "offset": 573696,
+   "length": 4096
+  },
+  {
+   "name": "layers.0.mlp_norm",
+   "shape": [64],
+   "dtype": "float32",
+   "offset": 590080,
+   "length": 64
+  },
+  {
+   "name": "layers.0.w_gate",
+   "shape": [64,256],
+   "dtype": "float32",
+   "offset": 590336,
+   "length": 16384
+  },
+  {
+   "name": "layers.0.w_up",
+   "shape": [64,256],
+   "dtype": "float32",
+   "offset": 655872,
+   "length": 16384
+  },
+  {
+   "name": "layers.0.w_down",
+   "shape": [256,64],
+   "dtype": "float32",
+   "offset": 721408,
+   "length": 16384
+  },
+  {
+   "name": "layers.1.attn_norm",
+   "shape": [64],
+   "dtype": "float32",
+   "offset": 786944,
+   "length": 64
+  },
+  {
+   "name": "layers.1.wq",
+   "shape": [64,64],
+   "dtype": "float32",
+   "offset": 787200,
+   "length": 4096
+  },
+  {
+   "name": "layers.1.wk",
+   "shape": [64,64],
+   "dtype": "float32",
+   "offset": 803584,
+   "length": 4096
+  },
+  {
+   "name": "layers.1.wv",
+   "shape": [64,64],
+   "dtype": "float32",
+   "offset": 819968,
+   "length": 4096
+  },
+  {
+   "name": "layers.1.wo",
+   "shape": [64,64],
+   "dtype": "float32",
+   "offset": 836352,
+   "length": 4096
+  },
+  {
+   "name": "layers.1.mlp_norm",
+   "shape": [64],
+   "dtype": "float32",
+   "offset": 852736,
+   "length": 64
+  },
+  {
+   "name": "layers.1.w_gate",
+   "shape": [64,256],
+   "dtype": "float32",
+   "offset": 852992,
+   "length": 16384
+  },
+  {
+   "name": "layers.1.w_up",
+   "shape": [64,256],
+   "dtype": "float32",
+   "offset": 918528,
+   "length": 16384
+  },
+  {
+   "name": "layers.1.w_down",
+   "shape": [256,64],
+   "dtype": "float32",
+   "offset": 984064,
+   "length": 16384
+  },
+  {
+   "name": "layers.2.attn_norm",
+   "shape": [64],
+   "dtype": "float32",
+   "offset": 1049600,
+   "length": 64
+  },
+  {
+   "name": "layers.2.wq",
+   "shape": [64,64],
+   "dtype": "float32",
+   "offset": 1049856,
+   "length": 4096
+  },
+  {
+   "name": "layers.2.wk",
+   "shape": [64,64],
+   "dtype": "float32",
+   "offset": 1066240,
+   "length": 4096
+  },
+  {
+   "name": "layers.2.wv",
+   "shape": [64,64],
+   "dtype": "float32",
+   "offset": 1082624,
+   "length": 4096
+  },
+  {
+   "name": "layers.2.wo",
+   "shape": [64,64],
+   "dtype": "float32",
+   "offset": 1099008,
+   "length": 4096
+  },
+  {
+   "name": "layers.2.mlp_norm",
+   "shape": [64],
+   "dtype": "float32",
+   "offset": 1115392,
+   "length": 64
+  },
+  {
+   "name": "layers.2.w_gate",
+   "shape": [64,256],
+   "dtype": "float32",
+   "offset": 1115648,
+   "length": 16384
+  },
+  {
+   "name": "layers.2.w_up",
+   "shape": [64,256],
+   "dtype": "float32",
+   "offset": 1181184,
+   "length": 16384
+  },
+  {
+   "name": "layers.2.w_down",
+   "shape": [256,64],
+   "dtype": "float32",
+   "offset": 1246720,
+   "length": 16384
+  },
+  {
+   "name": "layers.3.attn_norm",
+   "shape": [64],
+   "dtype": "float32",
+   "offset": 1312256,
+   "length": 64
+  },
+  {
+   "name": "layers.3.wq",
+   "shape": [64,64],
+   "dtype": "float32",
+   "offset": 1312512,
+   "length": 4096
+  },
+  {
+   "name": "layers.3.wk",
+   "shape": [64,64],
+   "dtype": "float32",
+   "offset": 1328896,
+   "length": 4096
+  },
+  {
+   "name": "layers.3.wv",
+   "shape": [64,64],
+   "dtype": "float32",
+   "offset": 1345280,
+   "length": 4096
+  },
+  {
+   "name": "layers.3.wo",
+   "shape": [64,64],
+   "dtype": "float32",
+   "offset": 1361664,
+   "length": 4096
+  },
+  {
+   "name": "layers.3.mlp_norm",
+   "shape": [64],
+   "dtype": "float32",
+   "offset": 1378048,
+   "length": 64
+  },
+  {
+   "name": "layers.3.w_gate",
+   "shape": [64,256],
+   "dtype": "float32",
+   "offset": 1378304,
+   "length": 16384
+  },
+  {
+   "name": "layers.3.w_up",
+   "shape": [64,256],
+   "dtype": "float32",
+   "offset": 1443840,
+   "length": 16384
+  },
+  {
+   "name": "layers.3.w_down",
+   "shape": [256,64],
+   "dtype": "float32",
+   "offset": 1509376,
+   "length": 16384
+  },
+  {
+   "name": "final_norm",
+   "shape": [64],
+   "dtype": "float32",
+   "offset": 1574912,
+   "length": 64
+  }
+ ],
+ "training": {
+  "dataset": "TinyStoriesV2-GPT4 (roneneldan/TinyStories): first 500 MB of the train split (133,949,812 tokens), validation = full valid split",
+  "train_tokens_seen": 1966080000,
+  "steps": 60000,
+  "final_train_loss": 1.933,
+  "final_val_loss": 1.9324,
+  "params_total": 393792,
+  "params_non_embedding": 262720,
+  "notes": "Llama-style decoder (pre-norm RMSNorm, RoPE interleaved, SwiGLU, no biases, tied embeddings). AdamW(0.9, 0.95), wd 0.1 on 2-D weights, peak LR 0.01, 1000 warmup steps, cosine to 0.05x, batch 256x128 tokens, grad clip 1.0, bf16 autocast, 8.6 min on an RTX 5070 Ti. Losses: float32 mean cross-entropy (nats/token) on the full validation split and on 2,097,152 random training tokens.",
+  "batch_size": 256,
+  "context_length": 128,
+  "peak_lr": 0.01,
+  "tokenizer": "byte-level BPE, 2048 tokens (256 bytes + 1791 merges + <|endoftext|>)"
+ },
+ "samples": [
+  {
+   "prompt": "Once upon a time, there was a little",
+   "completion": " boy named Tim. He had a toy that his favorite toy was a big, red ball. He loved to play with the ball every day. One day, he went to school to school.\nAt school, Tim's mom told him that his toy toy was a toy. They said it was fun. Tim was so happy to play with his toy all day. The toy was a fun day at school.\nWhen Tim got to school, he saw a big, red ball. He thought",
+   "seed": 1,
+   "temperature": 0.8,
+   "top_k": 40,
+   "max_new_tokens": 100,
+   "stopped_at_end_of_text": false,
+   "token_ids": [495,401,340,46,316,363,258,444,381,341,1225,444,282,258,345,44,667,474,46,316,502,265,324,327,262,474,584,326,46,527,326,44,285,426,265,1814,265,1814,46,10,1210,1814,44,340,379,385,737,475,381,341,444,444,282,258,444,46,311,323,308,282,442,46,340,282,389,375,265,324,327,341,444,431,326,46,284,444,282,258,442,326,448,1814,46,10,1033,340,654,265,1814,44,285,382,258,345,44,667,474,46,316,581]
+  },
+  {
+   "prompt": "Tom and his dog went to the",
+   "completion": " park. They saw a big hill with many wheels. Tom said, \"Let's go there and see what is up there!\" Tom said, \"No, it's a harmy dog! We can be friends and go play together!\"\nTom's dad smiled and said, \"Okay, we'll see. We need to find another part of the park.\"\nThey walked to the park and saw many kids. They saw a little girl selling the big ball.",
+   "seed": 2,
+   "temperature": 0.8,
+   "top_k": 40,
+   "max_new_tokens": 100,
+   "stopped_at_end_of_text": false,
+   "token_ids": [523,46,311,382,258,345,1239,327,660,1822,416,115,46,414,323,44,314,888,379,478,400,266,537,578,430,366,400,406,414,323,44,314,932,44,308,379,258,267,1906,121,463,33,793,466,321,410,266,478,324,456,406,10,734,379,720,561,266,323,44,314,1506,44,362,1857,537,46,793,767,265,570,1346,947,116,369,262,523,392,10,722,785,265,262,523,266,382,660,986,46,311,382,258,390,476,455,293,298,262,345,474,46]
+  },
+  {
+   "prompt": "Lily wanted to",
+   "completion": " paint a big, haircut. She wanted to paint the haircuts. She had a long hat and a long package. She wanted to paint a picture with paper and milk.\nShe put her paper on the wall. She brushed her paint, watching the water paint. She made pretty pictures and shapes. She paints with paper and flowers and milk. She put the paper with shapes of the pipe.\nSoon, Lily's",
+   "seed": 3,
+   "temperature": 0.8,
+   "top_k": 40,
+   "max_new_tokens": 100,
+   "stopped_at_end_of_text": false,
+   "token_ids": [1521,258,345,44,1328,99,320,46,338,407,265,1521,262,1328,99,320,115,46,338,363,258,733,1014,266,258,733,278,457,938,46,338,407,265,1521,258,1007,327,1330,266,280,2026,46,10,1370,575,335,1330,353,262,1380,46,338,559,637,480,335,1521,44,1054,298,262,682,1521,46,338,579,748,1541,266,1962,46,338,1521,115,327,1330,266,1069,266,280,2026,46,338,575,262,1330,327,1962,369,262,278,931,101,46,10,83,977,44,405,379]
+  },
+  {
+   "prompt": "One day, a big red ball",
+   "completion": " rolled near a big tree. The bird loved to play with the red ball. The ball would hold hands and play all day. The red ball was very happy.\nA little girl named Lily came to the tree. She wanted to play too. She tried to get the ball, but the ball was too high. She felt sad and thought about what to do.\nLily's mom found her and she said sorry. She gave the ball back to the squirrel and gave it back. Now,",
+   "seed": 4,
+   "temperature": 0.8,
+   "top_k": 40,
+   "max_new_tokens": 100,
+   "stopped_at_end_of_text": false,
+   "token_ids": [1759,811,258,345,496,46,284,419,502,265,324,327,262,667,474,46,284,474,528,1372,1098,266,324,431,326,46,284,667,474,282,378,375,46,10,65,390,476,401,405,549,265,262,496,46,338,407,265,324,421,46,338,652,265,643,262,474,44,409,262,474,282,421,896,46,338,533,493,266,581,662,578,265,374,46,10,664,379,385,504,335,266,391,323,778,46,338,758,262,474,511,265,262,1101,266,758,308,511,46,1138,44]
+  },
+  {
+   "prompt": "The sun was shining and",
+   "completion": " the birds were singing. One day, Emily and her mother were walking in the park. It was a warm day, and they all got to see the sun with their mom. Emily couldn't believe her eyes and she felt the warm feeling of the wind.\nThe sun saw a big cloud coming and the sky was so bright that it had given the rain out of their yard. Emily wanted to see the clouds, so she quickly ran to see what it was.",
+   "seed": 5,
+   "temperature": 0.8,
+   "top_k": 40,
+   "max_new_tokens": 100,
+   "stopped_at_end_of_text": false,
+   "token_ids": [262,1105,404,1920,46,527,326,44,1723,359,266,335,1848,404,1273,312,262,523,46,424,282,258,1047,326,44,266,360,431,654,265,537,262,632,327,467,385,46,1723,359,1053,479,1881,351,335,1173,266,391,533,262,1047,1307,369,262,856,46,10,411,632,382,258,345,1479,1428,266,262,813,282,389,1205,381,308,363,1730,772,262,1003,481,369,467,1229,46,1723,359,407,265,537,262,1479,115,44,389,391,1533,591,265,537,578,308,282,46]
+  }
+ ]
+}
