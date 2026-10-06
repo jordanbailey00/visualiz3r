@@ -76,9 +76,9 @@ export function HoverInfo({ container }: { container: React.RefObject<HTMLElemen
 
   return (
     <div ref={ref} className="pointer-events-none fixed left-0 top-0 z-40 transition-opacity duration-75" style={{ visibility: title ? "visible" : "hidden" }}>
-      <div className="panel max-w-[300px] px-3 py-2">
-        <div className="text-[12.5px] font-semibold text-white">{title}</div>
-        {sub && <div className="mt-0.5 font-mono text-[11.5px] leading-snug text-ink-300">{sub}</div>}
+      <div className="hud-tip !max-w-[300px]">
+        <div className="text-[12px] font-medium text-hud-text">{title}</div>
+        {sub && <div className="mt-1 font-mono text-[11px] leading-snug text-hud-dim">{sub}</div>}
       </div>
     </div>
   );

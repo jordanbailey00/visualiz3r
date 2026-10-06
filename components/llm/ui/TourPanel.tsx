@@ -1,7 +1,8 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Compass, Map, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Map, X } from "lucide-react";
 import { useEffect, useMemo } from "react";
+import { KV, pad } from "@/components/hud/Hud";
 import { Rich } from "@/components/site/Rich";
 import { MODEL_COMPARISON, type Ctx } from "@/lib/llm/viz/explain";
 import { useLlm } from "@/lib/llm/viz/store";
@@ -70,49 +71,46 @@ export function TourPanel({ onClose }: { onClose: () => void }) {
 
   return (
     <aside
-      className={`ui-chrome panel absolute z-20 flex flex-col overflow-hidden max-lg:inset-x-3 max-lg:bottom-[150px] max-lg:max-h-[42vh] lg:bottom-[132px] lg:left-4 lg:top-16 lg:w-[370px] ${
+      className={`ui-chrome hud-panel hud-reveal absolute z-20 flex flex-col max-lg:inset-x-3 max-lg:bottom-[150px] max-lg:max-h-[42vh] lg:left-4 lg:top-[64px] lg:max-h-[calc(100%-214px)] lg:w-[336px] ${
         hasSelection ? "max-lg:hidden" : ""
       }`}
+      aria-label="Guided tour"
     >
-      <div className="flex items-center gap-2 px-4 pb-2 pt-3.5">
-        <Compass className="size-4 text-violet-300" />
-        <h2 className="text-[13px] font-semibold text-ink-50">Guided tour</h2>
+      <header className="flex items-center gap-2 border-b border-hud-line py-2 pl-3.5 pr-2">
+        <span className="hud-lamp" data-on={step !== null ? "true" : undefined} />
+        <span className="hud-label text-hud-text">Guided tour</span>
         {step !== null && (
-          <span className="rounded-full bg-white/5 px-2 text-[11px] tabular-nums text-ink-300">
-            {step + 1} / {TOUR.length}
+          <span className="hud-label tabular-nums text-hud-faint">
+            {pad(step + 1)}/{pad(TOUR.length)}
           </span>
         )}
-        <button className="btn btn-icon ml-auto !h-7 !w-7" onClick={onClose} aria-label="Hide tour">
-          <X className="size-3.5" />
+        <button className="hud-x ml-auto" onClick={onClose} aria-label="Hide tour">
+          <X className="size-3" />
         </button>
-      </div>
+      </header>
 
-      <div className="flex flex-wrap gap-1 px-4 pb-3">
+      <nav className="flex flex-wrap gap-x-3 gap-y-1.5 border-b border-hud-line px-3.5 py-2.5" aria-label="Tour chapters">
         {chapters.map((c) => {
           const active = t?.chapter === c.name;
           return (
             <button
               key={c.name}
               onClick={() => setTour(c.first)}
-              className={`rounded-md px-2 py-1 text-[11px] font-medium transition-colors ${
-                active ? "bg-violet-400/20 text-violet-100 ring-1 ring-violet-300/40" : "bg-white/[0.04] text-ink-300 hover:bg-white/[0.08] hover:text-ink-100"
-              }`}
+              className={`hud-label text-[9px] transition-colors ${active ? "text-hud-accent-text" : "text-hud-faint hover:text-hud-text"}`}
             >
               {c.name}
             </button>
           );
         })}
-      </div>
+      </nav>
 
-      <div className="panel-scroll min-h-0 flex-1 overflow-y-auto px-4 pb-4">
+      <div className="hud-scroll min-h-0 flex-1 overflow-y-auto px-3.5 pb-4 pt-3.5">
         {t && ctx ? (
           <div key={t.id}>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-violet-300/90">{t.chapter}</p>
-            <h1 className="mt-1 text-[20px] font-semibold leading-tight tracking-tight text-white">{t.title}</h1>
-            {t.formula && (
-              <div className="mt-3 rounded-lg bg-black/30 px-3 py-2 font-mono text-[13px] text-violet-100 ring-1 ring-white/[0.06]">{t.formula}</div>
-            )}
-            <div className="prose-panel mt-3 text-[13.5px] leading-relaxed text-ink-200">
+            <p className="hud-label text-hud-accent-text">{t.chapter}</p>
+            <h1 className="mt-1.5 text-[17px] font-medium leading-snug tracking-tight text-hud-text">{t.title}</h1>
+            {t.formula && <div className="hud-formula mt-3">{t.formula}</div>}
+            <div className="hud-prose mt-3">
               {t.body(ctx).map((p, k) => (
                 <p key={k}>
                   <Rich text={p} />
@@ -126,48 +124,51 @@ export function TourPanel({ onClose }: { onClose: () => void }) {
           </div>
         ) : (
           <div>
-            <h1 className="text-[20px] font-semibold leading-tight tracking-tight text-white">How a language model turns text into the next word</h1>
-            <p className="mt-3 text-[13.5px] leading-relaxed text-ink-200">
+            <h1 className="text-[17px] font-medium leading-snug tracking-tight text-hud-text">How a language model turns text into the next word</h1>
+            <p className="hud-prose mt-3">
               A real transformer is running in your browser. Every grid of glowing cells is an actual matrix of numbers from it.
               Take the tour to follow your prompt step by step, or explore freely:
             </p>
-            <ul className="mt-3 space-y-1.5 text-[12.5px] text-ink-200">
-              <li>• Drag to rotate · right-drag to pan · scroll to zoom</li>
-              <li>• Hover a lane to follow one token through the model</li>
-              <li>• Click any grid, cell or label to see what it is and how it was computed</li>
-            </ul>
-            <button className="btn mt-5 w-full !h-10 !bg-violet-500/25 !text-violet-50 ring-1 ring-violet-300/40 hover:!bg-violet-500/35" onClick={() => setTour(0)}>
-              <Map className="size-4" /> Start the tour
+            <dl className="mt-3">
+              <KV k="Drag · right-drag" v={<span className="text-hud-dim">Rotate · pan</span>} />
+              <KV k="Scroll" v={<span className="text-hud-dim">Zoom</span>} />
+              <KV k="Hover a lane" v={<span className="text-hud-dim">Follow one token</span>} />
+              <KV k="Click" v={<span className="text-hud-dim">What it is · how it was computed</span>} />
+            </dl>
+            <button className="hud-btn mt-5 w-full !h-9" data-on="true" onClick={() => setTour(0)}>
+              <Map className="size-3.5" /> Start the tour
             </button>
           </div>
         )}
       </div>
 
       {step !== null && (
-        <div className="flex items-center gap-2 border-t border-white/[0.06] px-3 py-2.5">
-          <button className="btn !h-8" onClick={() => setTour(i > 0 ? i - 1 : null)} aria-label="Previous step">
-            <ChevronLeft className="size-4" /> Back
+        <footer className="flex items-center gap-2.5 border-t border-hud-line px-3 py-2.5">
+          <button className="hud-btn hud-btn-sq" onClick={() => setTour(i > 0 ? i - 1 : null)} aria-label="Previous step" title="Previous (←)">
+            <ChevronLeft className="size-3.5" />
           </button>
-          <div className="flex flex-1 justify-center gap-[3px]">
+          <div className="flex h-[7px] flex-1 gap-[2px]">
             {TOUR.map((_, k) => (
               <button
                 key={k}
                 onClick={() => setTour(k)}
-                className={`h-1.5 rounded-full transition-all ${k === i ? "w-4 bg-violet-300" : k < i ? "w-1.5 bg-violet-300/50" : "w-1.5 bg-white/15"}`}
+                className={`flex-1 transition-colors ${
+                  k === i ? "bg-hud-accent shadow-[0_0_8px_rgb(56_189_248/0.9)]" : k < i ? "bg-hud-accent/35 hover:bg-hud-accent/60" : "bg-white/10 hover:bg-white/25"
+                }`}
                 aria-label={`Step ${k + 1}`}
               />
             ))}
           </div>
           {i < TOUR.length - 1 ? (
-            <button className="btn !h-8 !bg-violet-500/25 !text-violet-50 ring-1 ring-violet-300/40" onClick={() => setTour(i + 1)}>
-              Next <ChevronRight className="size-4" />
+            <button className="hud-btn" data-on="true" onClick={() => setTour(i + 1)} title="Next (→)">
+              Next <ChevronRight className="size-3.5" />
             </button>
           ) : (
-            <button className="btn !h-8" onClick={() => setTour(null)}>
+            <button className="hud-btn" onClick={() => setTour(null)}>
               Explore
             </button>
           )}
-        </div>
+        </footer>
       )}
     </aside>
   );
@@ -175,9 +176,9 @@ export function TourPanel({ onClose }: { onClose: () => void }) {
 
 function ComparisonTable() {
   return (
-    <div className="mt-4 overflow-x-auto rounded-xl ring-1 ring-white/[0.07]">
+    <div className="mt-4 overflow-x-auto border border-hud-line">
       <table className="w-full text-left text-[11.5px]">
-        <thead className="bg-white/[0.04] text-ink-300">
+        <thead className="hud-label bg-white/[0.03] text-[9px]">
           <tr>
             {["Model", "Blocks", "Width", "Heads", "Vocab", "Params"].map((h) => (
               <th key={h} className="px-2.5 py-2 font-medium">
@@ -186,9 +187,9 @@ function ComparisonTable() {
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-white/[0.05]">
+        <tbody className="divide-y divide-hud-line">
           {MODEL_COMPARISON.map((m, k) => (
-            <tr key={m.name} className={k === 0 ? "text-violet-100" : "text-ink-200"}>
+            <tr key={m.name} className={k === 0 ? "text-hud-accent-text" : "text-hud-dim"}>
               <td className="px-2.5 py-1.5 font-medium">{m.name}</td>
               <td className="px-2.5 py-1.5 tabular-nums">{m.layers}</td>
               <td className="px-2.5 py-1.5 tabular-nums">{m.width}</td>

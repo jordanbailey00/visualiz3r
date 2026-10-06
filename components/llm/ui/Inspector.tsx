@@ -1,7 +1,8 @@
 "use client";
 
 import { Sigma, X } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { KV, Section } from "@/components/hud/Hud";
 import { Rich } from "@/components/site/Rich";
 import { valueAt } from "@/lib/llm/viz/data";
 import {
@@ -40,28 +41,36 @@ export function Inspector() {
   if (!ctx) return null;
   return (
     <aside
-      className={`ui-chrome panel absolute z-20 flex flex-col overflow-hidden max-lg:inset-x-3 max-lg:bottom-[150px] max-lg:max-h-[40vh] lg:bottom-[132px] lg:right-4 lg:top-16 lg:w-[380px] ${
+      key={panelKey(selected)}
+      className={`ui-chrome hud-panel hud-reveal absolute z-20 flex flex-col max-lg:inset-x-3 max-lg:bottom-[150px] max-lg:max-h-[40vh] lg:right-4 lg:top-[64px] lg:max-h-[calc(100%-214px)] lg:w-[324px] ${
         selected ? "" : "max-lg:hidden"
       }`}
     >
-      <div className="panel-scroll min-h-0 flex-1 overflow-y-auto px-5 pb-5 pt-4">
+      <div className="hud-scroll min-h-0 flex-1 overflow-y-auto px-3.5 pb-4 pt-3">
         {selected ? <TargetDetails target={selected} ctx={ctx} /> : <Predictions ctx={ctx} />}
       </div>
     </aside>
   );
 }
 
-function Header({ eyebrow, title, color = "#c4b5fd" }: { eyebrow: string; title: string; color?: string }) {
+/** Re-run the reveal when the readout shows a different thing, not a different cell of it. */
+function panelKey(t: Target | null) {
+  if (!t) return "predictions";
+  return t.kind === "token" ? `token:${t.index}` : `${t.kind}:${t.id}`;
+}
+
+function Header({ eyebrow, title, color = "#bae6fd" }: { eyebrow: string; title: string; color?: string }) {
   return (
     <div className="flex items-start gap-2">
       <div className="min-w-0 flex-1">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em]" style={{ color }}>
+        <p className="hud-label flex items-center gap-2" style={{ color }}>
+          <span className="h-2.5 w-[2px]" style={{ background: color, boxShadow: `0 0 6px ${color}` }} />
           {eyebrow}
         </p>
-        <h1 className="mt-1 text-[19px] font-semibold leading-tight tracking-tight text-white">{title}</h1>
+        <h1 className="mt-2 text-[17px] font-medium leading-snug tracking-tight text-hud-text">{title}</h1>
       </div>
-      <button className="btn btn-icon !h-7 !w-7 shrink-0" onClick={() => useLlm.getState().select(null)} aria-label="Close details">
-        <X className="size-3.5" />
+      <button className="hud-x -mr-1.5" onClick={() => useLlm.getState().select(null)} aria-label="Close details">
+        <X className="size-3" />
       </button>
     </div>
   );
@@ -69,12 +78,12 @@ function Header({ eyebrow, title, color = "#c4b5fd" }: { eyebrow: string; title:
 
 function Formula({ text }: { text?: string }) {
   if (!text) return null;
-  return <div className="mt-3 rounded-lg bg-black/30 px-3 py-2 font-mono text-[12.5px] text-violet-100 ring-1 ring-white/[0.06]">{text}</div>;
+  return <div className="hud-formula mt-3">{text}</div>;
 }
 
 function Paragraphs({ items }: { items: string[] }) {
   return (
-    <div className="prose-panel mt-3 text-[13px] leading-relaxed text-ink-200">
+    <div className="hud-prose mt-3">
       {items.map((p, k) => (
         <p key={k}>
           <Rich text={p} />
@@ -86,9 +95,9 @@ function Paragraphs({ items }: { items: string[] }) {
 
 function Stat({ k, v }: { k: string; v: string }) {
   return (
-    <div className="rounded-lg bg-white/[0.035] px-2.5 py-1.5 ring-1 ring-white/[0.05]">
-      <div className="text-[10.5px] uppercase tracking-wider text-ink-400">{k}</div>
-      <div className="font-mono text-[12.5px] text-ink-50">{v}</div>
+    <div className="border border-hud-line px-2 py-1.5">
+      <div className="hud-label text-[8.5px] text-hud-faint">{k}</div>
+      <div className="mt-1 font-mono text-[12px] text-hud-text">{v}</div>
     </div>
   );
 }
@@ -120,11 +129,11 @@ function TargetDetails({ target, ctx }: { target: Target; ctx: Ctx }) {
       return (
         <div>
           <Header eyebrow="Sub-layer" title={m.title} color={isAttn ? "#f472b6" : "#fb923c"} />
-          <p className="mt-2 text-[13px] text-ink-300">{m.subtitle}</p>
+          <p className="mt-1.5 text-[12.5px] text-hud-dim">{m.subtitle}</p>
           <ol className="mt-4 space-y-2">
             {items.map((s, k) => (
-              <li key={k} className="flex gap-2.5 text-[13px] leading-relaxed text-ink-200">
-                <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-white/[0.07] text-[11px] font-semibold text-ink-100">{k + 1}</span>
+              <li key={k} className="flex gap-2.5 text-[12.5px] leading-relaxed text-[#b3bcc7]">
+                <span className="mt-[3px] font-mono text-[10px] tabular-nums text-hud-accent-text">{String(k + 1).padStart(2, "0")}</span>
                 <span>{s}</span>
               </li>
             ))}
@@ -206,24 +215,24 @@ function MergeTree({ ctx, id }: { ctx: Ctx; id: number }) {
   walk(id);
   const show = (t: number) => showTokenPlain(ctx.tokenizer.tokenString(t));
   if (steps.length === 0)
-    return <p className="mt-3 text-[12.5px] text-ink-300">A single byte — one of the 256 base tokens every text can fall back to.</p>;
+    return <p className="mt-3 text-[12.5px] text-hud-dim">A single byte — one of the 256 base tokens every text can fall back to.</p>;
   return (
     <div className="mt-4">
-      <p className="mb-1.5 text-[11px] uppercase tracking-wider text-ink-400">Built by {steps.length} BPE merge{steps.length > 1 ? "s" : ""}</p>
+      <p className="hud-label mb-2 text-[9px] text-hud-faint">Built by {steps.length} BPE merge{steps.length > 1 ? "s" : ""}</p>
       <ol className="space-y-1">
         {steps.map((s, k) => (
           <li key={k} className="flex items-center gap-1.5 font-mono text-[12px]">
-            <span className="w-5 text-right text-ink-500">{k + 1}.</span>
-            <span className="rounded bg-white/[0.06] px-1.5 text-ink-200">{show(s.parts[0])}</span>
-            <span className="text-ink-500">+</span>
-            <span className="rounded bg-white/[0.06] px-1.5 text-ink-200">{show(s.parts[1])}</span>
-            <span className="text-ink-500">→</span>
-            <span className="rounded bg-amber-300/15 px-1.5 text-amber-100">{show(s.id)}</span>
-            <span className="ml-auto text-[10.5px] text-ink-500">merge #{s.id - 255}</span>
+            <span className="w-5 text-right text-hud-faint">{k + 1}.</span>
+            <span className="border border-hud-line px-1.5 text-hud-text">{show(s.parts[0])}</span>
+            <span className="text-hud-faint">+</span>
+            <span className="border border-hud-line px-1.5 text-hud-text">{show(s.parts[1])}</span>
+            <span className="text-hud-faint">→</span>
+            <span className="border border-amber-300/40 bg-amber-300/10 px-1.5 text-amber-100">{show(s.id)}</span>
+            <span className="ml-auto text-[10px] text-hud-faint">#{s.id - 255}</span>
           </li>
         ))}
       </ol>
-      <p className="mt-2 text-[11.5px] leading-snug text-ink-400">
+      <p className="mt-2 text-[11.5px] leading-snug text-hud-faint">
         Lower merge numbers were learned first — they are the most frequent pairs in the training stories.
       </p>
     </div>
@@ -237,7 +246,7 @@ function EmbeddingStrip({ ctx, id }: { ctx: Ctx; id: number }) {
   for (const v of row) max = Math.max(max, Math.abs(v));
   return (
     <div className="mt-4">
-      <p className="mb-1.5 text-[11px] uppercase tracking-wider text-ink-400">Its 64 embedding numbers</p>
+      <p className="hud-label mb-2 text-[9px] text-hud-faint">Its 64 embedding numbers</p>
       <div className="flex h-10 items-center gap-px">
         {Array.from(row).map((v, k) => (
           <div
@@ -269,7 +278,7 @@ function SlabDetails({ id, cell, ctx }: { id: string; cell?: [number, number]; c
   return (
     <div>
       <Header eyebrow={KIND_LABEL[spec.kind]} title={slabTitle(spec)} />
-      <p className="mt-1.5 font-mono text-[12px] text-ink-300">{shapeText(spec)}</p>
+      <p className="mt-1.5 font-mono text-[11px] text-hud-dim">{shapeText(spec)}</p>
       {cell && <CellDetails spec={spec} cell={cell} ctx={ctx} />}
       {spec.head !== undefined && spec.layer < ctx.model.config.nLayers && <HeadSummary ctx={ctx} layer={spec.layer} head={spec.head} />}
       <Formula text={step.formula} />
@@ -280,7 +289,7 @@ function SlabDetails({ id, cell, ctx }: { id: string; cell?: [number, number]; c
         <Stat k="mean" v={fmt(st.mean, 2)} />
         <Stat k="std" v={fmt(st.std, 2)} />
       </div>
-      {!cell && <p className="mt-3 text-[12px] text-ink-400">Click a single cell to see its value and where it came from.</p>}
+      {!cell && <p className="hud-label mt-3.5 text-[9px] text-hud-faint">Click a single cell to see its value and where it came from</p>}
     </div>
   );
 }
@@ -294,20 +303,20 @@ function HeadSummary({ ctx, layer, head }: { ctx: Ctx; layer: number; head: numb
     ["other tokens", p.other, "#4ade80"],
   ];
   return (
-    <div className="mt-4 rounded-xl bg-white/[0.035] p-3 ring-1 ring-white/[0.06]">
-      <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-300">What head {head + 1} does on this prompt</p>
-      <p className="prose-panel mt-1.5 text-[12.5px] leading-relaxed text-ink-200">
+    <div className="mt-4 border border-hud-line p-3">
+      <p className="hud-label text-[9px] text-hud-text">What head {head + 1} does on this prompt</p>
+      <p className="hud-prose mt-2 !text-[12.5px]">
         <Rich text={p.summary} />
       </p>
-      <div className="mt-2.5 flex h-2 overflow-hidden rounded-full">
+      <div className="mt-2.5 flex h-[5px] gap-px overflow-hidden">
         {bars.map(([k, v, c]) => (
           <div key={k} style={{ width: `${v * 100}%`, background: c }} title={`${k}: ${pct(v, 0)}`} />
         ))}
       </div>
       <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1">
         {bars.map(([k, v, c]) => (
-          <span key={k} className="flex items-center gap-1 text-[10.5px] text-ink-300">
-            <span className="size-1.5 rounded-full" style={{ background: c }} />
+          <span key={k} className="flex items-center gap-1.5 font-mono text-[10px] text-hud-dim">
+            <span className="h-2 w-[2px]" style={{ background: c }} />
             {k} {pct(v, 0)}
           </span>
         ))}
@@ -349,13 +358,13 @@ function CellDetails({ spec, cell, ctx }: { spec: SlabSpec; cell: [number, numbe
   }
 
   return (
-    <div className="mt-4 rounded-xl bg-violet-400/[0.07] p-3 ring-1 ring-violet-300/20">
+    <div className="mt-4 border border-hud-accent/30 bg-hud-accent/[0.05] p-3">
       <div className="flex items-baseline justify-between gap-2">
-        <span className="text-[11.5px] text-violet-200">{where}</span>
-        <span className="font-mono text-[18px] font-semibold text-white">{fmt(v)}</span>
+        <span className="hud-label text-[9px] normal-case tracking-[0.06em] text-hud-accent-text">{where}</span>
+        <span className="font-mono text-[18px] font-medium text-hud-text">{fmt(v)}</span>
       </div>
       {note && (
-        <p className="prose-panel mt-1.5 text-[12.5px] leading-relaxed text-ink-200">
+        <p className="hud-prose mt-2 !text-[12.5px]">
           <Rich text={note} />
         </p>
       )}
@@ -370,20 +379,20 @@ function DotProduct({ terms, spec }: { terms: NonNullable<ReturnType<typeof dotT
   const n = terms.terms.length;
   return (
     <div className="mt-3">
-      <p className="flex items-center gap-1.5 text-[11.5px] text-ink-300">
-        <Sigma className="size-3.5 text-violet-300" />
+      <p className="flex items-center gap-1.5 text-[11.5px] text-hud-dim">
+        <Sigma className="size-3.5 text-hud-accent" />
         Sum of {n} products {spec.id.endsWith(".out") && spec.id.includes(".h") ? "(attention × value)" : spec.kind === "scores" ? "(query × key ÷ 4)" : "(input × weight)"} — largest:
       </p>
       <div className="mt-2 space-y-1">
         {top.map((t) => (
           <div key={t.index} className="flex items-center gap-2 font-mono text-[11px]">
-            <span className="w-8 shrink-0 text-right text-ink-400">#{t.index}</span>
-            <span className="w-[92px] shrink-0 text-ink-300">
+            <span className="w-7 shrink-0 text-right text-hud-faint">#{t.index}</span>
+            <span className="w-[100px] shrink-0 whitespace-nowrap text-hud-dim">
               {t.a.toFixed(2)} × {t.b.toFixed(2)}
             </span>
-            <div className="relative h-2.5 flex-1 rounded-sm bg-white/[0.04]">
+            <div className="relative h-2.5 flex-1 bg-white/[0.04]">
               <div
-                className="absolute top-0 h-full rounded-sm"
+                className="absolute top-0 h-full"
                 style={{
                   width: `${(Math.abs(t.product) / max) * 50}%`,
                   left: t.product >= 0 ? "50%" : `${50 - (Math.abs(t.product) / max) * 50}%`,
@@ -392,12 +401,12 @@ function DotProduct({ terms, spec }: { terms: NonNullable<ReturnType<typeof dotT
               />
               <div className="absolute left-1/2 top-0 h-full w-px bg-white/20" />
             </div>
-            <span className="w-12 shrink-0 text-right text-ink-100">{t.product >= 0 ? "+" : ""}{t.product.toFixed(2)}</span>
+            <span className="w-11 shrink-0 text-right text-hud-text">{t.product >= 0 ? "+" : ""}{t.product.toFixed(2)}</span>
           </div>
         ))}
       </div>
-      <p className="mt-2 text-right font-mono text-[11.5px] text-ink-200">
-        total of all {n} = <span className="text-white">{terms.sum.toFixed(4)}</span>
+      <p className="mt-2 text-right font-mono text-[11px] text-hud-dim">
+        total of all {n} = <span className="text-hud-text">{terms.sum.toFixed(4)}</span>
       </p>
     </div>
   );
@@ -407,38 +416,52 @@ function Predictions({ ctx }: { ctx: Ctx }) {
   const predictions = useLlm((s) => s.predictions);
   const temperature = useLlm((s) => s.temperature);
   const topK = useLlm((s) => s.topK);
+  const [modelOpen, setModelOpen] = useState(false);
   const max = predictions[0]?.prob ?? 1;
   return (
     <div>
-      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-emerald-300/90">Next-token prediction</p>
-      <h1 className="mt-1 text-[19px] font-semibold leading-tight tracking-tight text-white">What comes next?</h1>
-      <p className="mt-2 text-[12.5px] leading-relaxed text-ink-300">
-        Probabilities after temperature {temperature.toFixed(2)} and top-{topK}. Click <b className="text-ink-100">Generate</b> to sample one and feed it back in.
+      <div className="flex items-center gap-2">
+        <span className="hud-lamp" data-on="true" />
+        <span className="hud-label text-hud-text">Next token</span>
+        <span className="hud-label ml-auto text-[9px] text-hud-faint">
+          T {temperature.toFixed(2)} · K {topK === 0 ? "all" : topK}
+        </span>
+      </div>
+      <p className="mt-2.5 text-[11.5px] leading-relaxed text-hud-dim">
+        Probabilities after temperature {temperature.toFixed(2)} and top-{topK}. Click <b className="font-medium text-hud-text">Generate</b> to sample one and feed it back in.
       </p>
-      <div className="mt-4 space-y-1.5">
-        {predictions.slice(0, 10).map((p) => (
+      <div className="mt-3 space-y-px">
+        {predictions.slice(0, 10).map((p, k) => (
           <button
             key={p.id}
-            className="group flex w-full items-center gap-2.5 rounded-lg px-2 py-1 text-left hover:bg-white/[0.05]"
+            className="group grid w-full grid-cols-[86px_1fr_44px] items-center gap-2.5 px-1 py-[3px] text-left transition-colors hover:bg-white/[0.04]"
             onClick={() => useLlm.getState().select({ kind: "vocab", id: p.id, where: "output" })}
           >
-            <span className="w-24 shrink-0 truncate font-mono text-[12.5px] text-ink-50">{showTokenPlain(ctx.tokenizer.tokenString(p.id))}</span>
-            <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/[0.05]">
-              <div className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-lime-300" style={{ width: `${(p.prob / max) * 100}%` }} />
-            </div>
-            <span className="w-12 shrink-0 text-right font-mono text-[11.5px] text-ink-300">{pct(p.prob)}</span>
+            <span className={`truncate font-mono text-[12px] ${k === 0 ? "text-hud-text" : "text-hud-dim group-hover:text-hud-text"}`}>
+              {showTokenPlain(ctx.tokenizer.tokenString(p.id))}
+            </span>
+            <span className="relative h-[3px] bg-white/[0.06]">
+              <span
+                className={`absolute inset-y-0 left-0 ${k === 0 ? "bg-hud-accent shadow-[0_0_8px_rgb(56_189_248/0.8)]" : "bg-[rgb(186_204_224/0.45)]"}`}
+                style={{ width: `${(p.prob / max) * 100}%` }}
+              />
+            </span>
+            <span className="text-right font-mono text-[10.5px] tabular-nums text-hud-dim">{pct(p.prob)}</span>
           </button>
         ))}
       </div>
-      <div className="mt-6 grid grid-cols-2 gap-2">
-        <Stat k="Parameters" v={ctx.model.training.paramsTotal.toLocaleString()} />
-        <Stat k="Blocks × heads" v={`${ctx.model.config.nLayers} × ${ctx.model.config.nHeads}`} />
-        <Stat k="Width" v={`${ctx.model.config.dModel} (MLP ${ctx.model.config.dFF})`} />
-        <Stat k="Vocabulary" v={ctx.model.config.vocabSize.toLocaleString()} />
-      </div>
-      <p className="mt-3 text-[11.5px] leading-relaxed text-ink-400">
-        Trained on TinyStories (short children&apos;s stories) — validation loss {ctx.model.training.finalValLoss.toFixed(2)} nats/token.
-      </p>
+      <div className="hud-rule mb-1 mt-3.5" />
+      <Section title="Model" open={modelOpen} onToggle={() => setModelOpen((o) => !o)}>
+        <dl className="-ml-5">
+          <KV k="Parameters" v={ctx.model.training.paramsTotal.toLocaleString()} />
+          <KV k="Blocks × heads" v={`${ctx.model.config.nLayers} × ${ctx.model.config.nHeads}`} />
+          <KV k="Width" v={`${ctx.model.config.dModel} (MLP ${ctx.model.config.dFF})`} />
+          <KV k="Vocabulary" v={ctx.model.config.vocabSize.toLocaleString()} />
+        </dl>
+        <p className="-ml-5 mt-2.5 text-[11.5px] leading-relaxed text-hud-faint">
+          Trained on TinyStories (short children&apos;s stories) — validation loss {ctx.model.training.finalValLoss.toFixed(2)} nats/token.
+        </p>
+      </Section>
     </div>
   );
 }

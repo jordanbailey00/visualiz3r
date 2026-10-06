@@ -85,4 +85,5 @@ npm run smoke   # loads every device, explodes it, zooms to its smallest part
 In development `window.__explorer` is the store and `window.__three` the R3F state
 (`__three.controls` is the CameraControls instance). `--mouse x,y` moves the pointer
 and prints the hovered part. Press **H** (or add `?clean` to the URL) to hide the UI
-for clean renders; **L** toggles part labels, **E** explode, **X** X-ray, **R** reset.
+for clean renders; **C** opens the component tree, **I** the unit brief, **L** toggles
+part labels, **E** explode, **X** X-ray, **R** reset.

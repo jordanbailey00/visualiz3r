@@ -1,9 +1,9 @@
 "use client";
 
-import { Compass, Cpu, Maximize } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ControlHint, ExitLink, HudBar, Lamp } from "@/components/hud/Hud";
+import { HudLoader } from "@/components/site/LoadingScreen";
 import { PresentationMode } from "@/components/site/PresentationMode";
-import { SectionLink, TopNav } from "@/components/site/TopNav";
 import type { VizLayout } from "@/lib/llm/viz/layout";
 import { useLlm } from "@/lib/llm/viz/store";
 import { slabBox } from "@/lib/llm/viz/tour";
@@ -47,19 +47,38 @@ export default function LlmExplorer() {
   const container = useRef<HTMLDivElement>(null);
   const status = useLlm((s) => s.status);
   const error = useLlm((s) => s.error);
-  const [tourOpen, setTourOpen] = useState(true);
+  const tourStep = useLlm((s) => s.tourStep);
+  // The tour is summoned from the top-right switch; its lamp blinks until then.
+  const [tourOpen, setTourOpen] = useState(false);
+  const [tourSeen, setTourSeen] = useState(false);
+  const [region, setRegion] = useState<string | null>("Overview");
+  const [engaged, setEngaged] = useState(false);
+  const selected = useLlm((s) => s.selected);
+  const config = useLlm((s) => s.model?.config);
   useTourEffects();
 
   useEffect(() => {
     useLlm.getState().init();
-    if (window.innerWidth < 900) setTourOpen(false);
     if (process.env.NODE_ENV !== "production") (window as unknown as { __llm: typeof useLlm }).__llm = useLlm;
     const onKey = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
       if (e.key === "Escape") useLlm.getState().select(null);
+      else if (e.key === "t" || e.key === "T") {
+        setTourOpen((o) => !o);
+        setTourSeen(true);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
+
+  useEffect(() => {
+    if (tourStep !== null) setRegion(null);
+  }, [tourStep]);
+  useEffect(() => {
+    if (selected) setEngaged(true);
+  }, [selected]);
 
   const go = (r: Region) => {
     const s = useLlm.getState();
@@ -67,39 +86,41 @@ export default function LlmExplorer() {
     s.setTour(null);
     const b = r.box(s.layout);
     s.frame(b.min, b.max, r.dir);
+    setRegion(r.label);
+  };
+
+  // Room taken by panels: the readout (324 px) is always there, the tour (336 px) on demand.
+  const insets = useMemo(() => ({ left: tourOpen ? 368 : 0, right: 356 }), [tourOpen]);
+
+  const openTour = () => {
+    setTourOpen((o) => !o);
+    setTourSeen(true);
   };
 
   return (
     <div ref={container} className="fixed inset-0 overflow-hidden bg-[#05060a]">
-      <div className="absolute inset-0">{status === "ready" && <LlmCanvas />}</div>
+      <div className="absolute inset-0">{status === "ready" && <LlmCanvas insets={insets} />}</div>
       <PresentationMode />
-      <TopNav
+      <HudBar
+        exit={<ExitLink href="/" label="Home" />}
         center={
-          <nav className="panel flex h-10 items-center gap-0.5 overflow-x-auto p-1" aria-label="Model sections">
+          <nav className="hud-selector" aria-label="Model sections">
             {REGIONS.map((r) => (
-              <button
-                key={r.label}
-                onClick={() => go(r)}
-                className="flex h-8 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 text-[12.5px] font-medium text-ink-300 transition-colors hover:bg-white/5 hover:text-ink-50"
-              >
-                {r.label === "Overview" && <Maximize className="size-3.5" />}
+              <button key={r.label} onClick={() => go(r)} className="hud-sel" data-on={region === r.label}>
                 {r.label}
               </button>
             ))}
           </nav>
         }
+        caption={
+          config
+            ? `${config.nLayers} blocks · ${config.nHeads} heads · width ${config.dModel} · ${config.vocabSize.toLocaleString()}-token vocabulary`
+            : undefined
+        }
         right={
-          <>
-            {!tourOpen && (
-              <button className="panel flex h-10 items-center gap-2 px-3.5 text-[13px] font-medium text-violet-200 hover:text-white" onClick={() => setTourOpen(true)}>
-                <Compass className="size-4" /> Tour
-              </button>
-            )}
-            <SectionLink href="/hardware">
-              <Cpu className="size-4" />
-              <span className="hidden lg:inline">Hardware</span>
-            </SectionLink>
-          </>
+          <button className="hud-btn" data-on={tourOpen} onClick={openTour} title="Guided tour (T)" aria-pressed={tourOpen}>
+            <Lamp on={tourOpen} blink={!tourOpen && !tourSeen} /> Tour
+          </button>
         }
       />
       {status === "ready" && (
@@ -107,19 +128,28 @@ export default function LlmExplorer() {
           {tourOpen && <TourPanel onClose={() => setTourOpen(false)} />}
           <Inspector />
           <PromptBar />
+          {!engaged && !tourOpen && (
+            <ControlHint
+              className="bottom-[150px]"
+              items={[
+                ["Drag", "rotate"],
+                ["Scroll", "zoom"],
+                ["Hover a lane", "follow a token"],
+                ["Click", "inspect"],
+                ["T", "guided tour"],
+              ]}
+            />
+          )}
           <HoverInfo container={container} />
         </>
       )}
       {(status === "loading" || status === "idle") && (
         <div className="absolute inset-0 grid place-items-center">
-          <div className="flex flex-col items-center gap-4">
-            <div className="size-9 animate-spin rounded-full border-2 border-white/10 border-t-violet-400" />
-            <p className="text-[13px] text-ink-300">Loading the model (1.6 MB of weights)…</p>
-          </div>
+          <HudLoader label="Loading model · 1.6 MB of weights" />
         </div>
       )}
       {status === "error" && (
-        <div className="absolute inset-0 grid place-items-center text-[13px] text-red-300">Could not load the model: {error}</div>
+        <div className="hud-label absolute inset-0 grid place-items-center text-red-300">Could not load the model: {error}</div>
       )}
     </div>
   );

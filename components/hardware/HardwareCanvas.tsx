@@ -36,9 +36,11 @@ import { meshesOf, modelRoot, partObjects } from "./sceneState";
 export interface HardwareCanvasProps {
   device: DeviceInfo;
   Model: ComponentType;
+  /** Screen pixels covered by open side panels; the picture glides clear of them. */
+  insets?: { left: number; right: number };
 }
 
-export default function HardwareCanvas({ device, Model }: HardwareCanvasProps) {
+export default function HardwareCanvas({ device, Model, insets = NO_INSETS }: HardwareCanvasProps) {
   const quality = useExplorer((s) => s.quality);
   const high = quality === "high";
   return (
@@ -63,7 +65,7 @@ export default function HardwareCanvas({ device, Model }: HardwareCanvasProps) {
       </Suspense>
       <PartLabels device={device} />
       <Floor size={device.size} />
-      <CameraRig device={device} />
+      <CameraRig device={device} insets={insets} />
       <ExplodeDriver />
       <Effects size={device.size} high={high} />
       <DevHook />
@@ -191,10 +193,15 @@ const tmpSphere = new Sphere();
 const tmpV = new Vector3();
 const tmpT = new Vector3();
 
-/** Side panels: 296 px on the left, 396 px on the right, plus gutters. */
-const PANELS = { left: 296, right: 396, total: 720 };
+const NO_INSETS = { left: 0, right: 0 };
 
-function CameraRig({ device }: { device: DeviceInfo }) {
+/**
+ * Panels only appear on demand, so models are framed to most of the screen
+ * (clear of the top bar and the toolbar) and slide aside when a panel opens.
+ */
+const FRAME = { width: 0.8, top: 76, bottom: 100 };
+
+function CameraRig({ device, insets }: { device: DeviceInfo; insets: { left: number; right: number } }) {
   const controls = useRef<CameraControlsImpl>(null);
   const camera = useThree((s) => s.camera) as PerspectiveCamera;
   const size = useThree((s) => s.size);
@@ -203,10 +210,10 @@ function CameraRig({ device }: { device: DeviceInfo }) {
   const nodes = useExplorer((s) => s.nodes);
   const uiHidden = useUiHidden();
   const home = useRef<{ pos: Vector3; target: Vector3 } | null>(null);
-  const panels = size.width > 1100 && !uiHidden;
+  const wide = size.width > 1100 && !uiHidden;
 
-  // Keep whatever the camera looks at centred in the gap between the panels.
-  useViewShift(controls, panels ? (PANELS.right - PANELS.left) / 2 : 0, 0);
+  // Centre the picture in the space the open panels leave free.
+  useViewShift(controls, wide ? (insets.right - insets.left) / 2 : 0, uiHidden ? 0 : (FRAME.bottom - FRAME.top) / 2);
 
   /** Target and distance that frame what is visible under `obj` along `dir`. */
   const frame = (obj: Object3D, dir: Vector3, margin?: number) =>
@@ -214,8 +221,8 @@ function CameraRig({ device }: { device: DeviceInfo }) {
       fov: camera.fov,
       width: size.width,
       height: size.height,
-      freeWidth: panels ? (size.width - PANELS.total) / size.width : 0.95,
-      freeHeight: uiHidden ? 1 : 0.9,
+      freeWidth: uiHidden ? 0.95 : FRAME.width,
+      freeHeight: uiHidden ? 1 : Math.max(0.5, (size.height - FRAME.top - FRAME.bottom) / size.height),
       margin,
     });
 

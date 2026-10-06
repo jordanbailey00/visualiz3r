@@ -19,7 +19,10 @@ import { setPulseOrder, triggerSweep } from "./pulse";
 import { ModuleBox, OpBadge } from "./Structure";
 import { TensorSlab } from "./TensorSlab";
 
-export default function LlmCanvas() {
+const NO_INSETS = { left: 0, right: 0 };
+
+/** `insets`: screen pixels covered by open side panels; the picture stays clear of them. */
+export default function LlmCanvas({ insets = NO_INSETS }: { insets?: { left: number; right: number } }) {
   return (
     <Canvas
       events={visibleOnlyEvents}
@@ -33,7 +36,7 @@ export default function LlmCanvas() {
       <directionalLight position={[300, 600, 500]} intensity={1.4} />
       <directionalLight position={[-400, 200, -300]} intensity={0.4} color="#a5b4fc" />
       <Scene />
-      <CameraRig />
+      <CameraRig insets={insets} />
       <EffectComposer multisampling={4}>
         <Bloom luminanceThreshold={0.62} luminanceSmoothing={0.25} intensity={0.85} mipmapBlur />
         <ToneMapping mode={ToneMappingMode.NEUTRAL} />
@@ -151,7 +154,7 @@ const sphere = new Sphere();
 const v = new Vector3();
 
 /** Frames the whole model initially, then follows camera goals from the tour / inspector. */
-function CameraRig() {
+function CameraRig({ insets }: { insets: { left: number; right: number } }) {
   const controls = useRef<CameraControlsImpl>(null);
   const camera = useThree((s) => s.camera) as PerspectiveCamera;
   const size = useThree((s) => s.size);
@@ -160,7 +163,10 @@ function CameraRig() {
   const framed = useRef(false);
   const uiHidden = useUiHidden();
   // The prompt bar covers the bottom ~140 px: lift the picture a little.
-  useViewShift(controls, 0, uiHidden ? 0 : 60);
+  const wide = size.width > 1100 && !uiHidden;
+  const latest = useRef(insets);
+  latest.current = insets;
+  useViewShift(controls, wide ? (insets.right - insets.left) / 2 : 0, uiHidden ? 0 : 60);
 
   const fit = (min: [number, number, number], max: [number, number, number], dir: [number, number, number], smooth: boolean) => {
     const c = controls.current;
@@ -170,7 +176,8 @@ function CameraRig() {
     box.getBoundingSphere(sphere);
     const vfov = (camera.fov * Math.PI) / 180;
     const aspect = size.width / size.height;
-    const free = size.width > 1100 && !isUiHidden() ? (size.width - 800) / size.width : 0.95;
+    const inset = latest.current;
+    const free = size.width > 1100 && !isUiHidden() ? Math.max(0.35, (size.width - inset.left - inset.right - 40) / size.width) : 0.95;
     const hfov = 2 * Math.atan(Math.tan(vfov / 2) * aspect * free);
     // Camera basis for this view direction; measure the box's projected extent.
     v.set(...dir).normalize();

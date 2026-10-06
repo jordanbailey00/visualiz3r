@@ -27,7 +27,7 @@ export function RopeFigure({ positions }: { positions: number }) {
   const n = Math.max(2, Math.min(positions, 8));
   const shown = Math.min(n, Math.floor(t / 0.6) + 1);
   return (
-    <figure className="mt-4 rounded-xl bg-black/25 p-3 ring-1 ring-white/[0.06]">
+    <figure className="mt-4 border border-hud-line bg-black/25 p-3">
       <div className="grid grid-cols-3 gap-2">
         {pairs.map((i) => {
           const theta = Math.pow(10000, (-2 * i) / D);
@@ -51,12 +51,12 @@ export function RopeFigure({ positions }: { positions: number }) {
                 })}
                 <circle r="3" fill="#c4b5fd" />
               </svg>
-              <span className="mt-1 text-[10.5px] text-ink-400">pair {i + 1} · {theta >= 0.1 ? theta.toFixed(2) : theta.toExponential(0)} rad/token</span>
+              <span className="mt-1 text-[10.5px] text-hud-faint">pair {i + 1} · {theta >= 0.1 ? theta.toFixed(2) : theta.toExponential(0)} rad/token</span>
             </div>
           );
         })}
       </div>
-      <figcaption className="mt-2 text-[11.5px] leading-snug text-ink-300">
+      <figcaption className="mt-2 text-[11.5px] leading-snug text-hud-dim">
         Each pair of numbers in a query or key is rotated by its position (0, 1, 2…) times a fixed speed. Fast pairs (left) spin a lot per token;
         slow pairs barely move — together they encode position at every scale.
       </figcaption>
@@ -75,7 +75,7 @@ export function SiluFigure() {
     relu.push(`${(i / 80) * 220 + 10},${90 - Math.max(0, z) * 12}`);
   }
   return (
-    <figure className="mt-4 rounded-xl bg-black/25 p-3 ring-1 ring-white/[0.06]">
+    <figure className="mt-4 border border-hud-line bg-black/25 p-3">
       <svg viewBox="0 0 240 110" className="w-full">
         <line x1="10" y1="90" x2="230" y2="90" stroke="rgba(255,255,255,0.15)" />
         <line x1="120" y1="10" x2="120" y2="105" stroke="rgba(255,255,255,0.15)" />
@@ -86,7 +86,7 @@ export function SiluFigure() {
         <text x="12" y="104" fontSize="9" fill="#64748b">−6</text>
         <text x="220" y="104" fontSize="9" fill="#64748b">+6</text>
       </svg>
-      <figcaption className="mt-1 text-[11.5px] leading-snug text-ink-300">
+      <figcaption className="mt-1 text-[11.5px] leading-snug text-hud-dim">
         Negative inputs are squashed toward 0, positive ones pass through — a smooth version of ReLU. In SwiGLU it acts as a gate on each of the
         256 features.
       </figcaption>
@@ -105,14 +105,14 @@ export function TemperatureFigure({ ctx }: { ctx: Ctx }) {
     .slice(0, 5);
   const dists = temps.map((t) => softmaxWithTemperature(logits, t));
   return (
-    <figure className="mt-4 rounded-xl bg-black/25 p-3 ring-1 ring-white/[0.06]">
+    <figure className="mt-4 border border-hud-line bg-black/25 p-3">
       <div className="grid grid-cols-3 gap-3">
         {temps.map((t, k) => (
           <div key={t}>
-            <p className="mb-1.5 text-center text-[11px] font-semibold text-ink-200">temperature {t}</p>
+            <p className="mb-1.5 text-center text-[11px] font-semibold text-hud-text">temperature {t}</p>
             {top.map((id) => (
               <div key={id} className="mb-1">
-                <div className="flex justify-between font-mono text-[10px] text-ink-300">
+                <div className="flex justify-between font-mono text-[10px] text-hud-dim">
                   <span className="truncate">{showTokenPlain(ctx.tokenizer.tokenString(id))}</span>
                   <span>{pct(dists[k][id], 0)}</span>
                 </div>
@@ -124,7 +124,7 @@ export function TemperatureFigure({ ctx }: { ctx: Ctx }) {
           </div>
         ))}
       </div>
-      <figcaption className="mt-2 text-[11.5px] leading-snug text-ink-300">
+      <figcaption className="mt-2 text-[11.5px] leading-snug text-hud-dim">
         Dividing the logits by a temperature before softmax: low temperature makes the favourite even more likely (safe, repetitive), high
         temperature spreads probability to surprising choices.
       </figcaption>

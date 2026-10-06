@@ -15,6 +15,11 @@ Interactive 3D explainers for curious people:
 
 ![](public/previews/llm.webp)
 
+The interface is an instrument panel that stays out of the way: the home screen
+is just two dials, and in the explorers every panel is summoned — **C** opens
+the component tree, **I** the unit brief, **T** the guided tour (LLM), clicking
+a part opens its readout, and **H** hides everything for a clean view.
+
 ## Running it
 
 ```bash
@@ -43,6 +48,7 @@ drei and `@react-three/postprocessing`, Zustand for state, Tailwind CSS 4.
 
 ```
 app/                     routes: / , /hardware , /hardware/[device] , /llm
+components/hud/          interface kit: dials, panels, selector, lamps, readout sections
 components/hardware/     hardware explorer (canvas, UI, part system)
   kit/                   reusable procedural parts: PCBs, chips, passives, connectors, fans, heat pipes…
   models/<device>/       one folder per device model
@@ -56,6 +62,7 @@ scripts/llm/             data prep, tokenizer and model training (PyTorch), expo
 scripts/screenshot.mjs   headless screenshots for visual checks
 scripts/smoke.mjs        end-to-end smoke test of every route
 public/llm/              the trained model (model.json, model.bin, tokenizer.json)
+public/previews/dial/    square renders shown inside the home and unit-select dials
 ```
 
 ### Hardware models

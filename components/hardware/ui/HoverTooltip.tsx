@@ -37,12 +37,12 @@ export function HoverTooltip({ device, container }: { device: DeviceInfo; contai
       style={{ visibility: show ? "visible" : "hidden" }}
     >
       {info && cat && (
-        <div className="panel max-w-[260px] px-3 py-2">
-          <div className="flex items-center gap-1.5">
-            <span className="size-1.5 rounded-full" style={{ background: cat.color }} />
-            <span className="text-[12.5px] font-semibold text-white">{info.name}</span>
+        <div className="hud-tip">
+          <div className="flex items-center gap-2">
+            <span className="h-2.5 w-[2px] shrink-0" style={{ background: cat.color }} />
+            <span className="text-[12px] font-medium text-hud-text">{info.name}</span>
           </div>
-          <p className="mt-0.5 line-clamp-2 text-[11.5px] leading-snug text-ink-300">{info.summary}</p>
+          <p className="mt-1 line-clamp-2 pl-[10px] text-[11px] leading-snug text-hud-dim">{info.summary}</p>
         </div>
       )}
     </div>
