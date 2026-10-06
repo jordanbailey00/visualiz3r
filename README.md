@@ -15,10 +15,12 @@ Interactive 3D explainers for curious people:
 
 ![](public/previews/llm.webp)
 
-The interface is an instrument panel that stays out of the way: the home screen
-is just two dials, and in the explorers every panel is summoned — **C** opens
-the component tree, **I** the unit brief, **T** the guided tour (LLM), clicking
-a part opens its readout, and **H** hides everything for a clean view.
+The home page is the ASCII logo over a slowly rotating star field, with every
+device and the language model shown as a picture and a name. Inside the
+explorers the interface is an instrument panel that stays out of the way: every
+panel is summoned — **C** opens the component tree, **I** the unit brief, **T**
+the guided tour (LLM), clicking a part opens its readout, and **H** hides
+everything for a clean view.
 
 ## Running it
 
@@ -47,8 +49,10 @@ Next.js 16 (App Router, Turbopack), React 19, three.js via React Three Fiber,
 drei and `@react-three/postprocessing`, Zustand for state, Tailwind CSS 4.
 
 ```
-app/                     routes: / , /hardware , /hardware/[device] , /llm
-components/hud/          interface kit: dials, panels, selector, lamps, readout sections
+app/                     routes: / , /hardware/[device] , /llm
+logo.txt                 the ASCII logo on the home page (read at build time)
+components/site/         home page pieces: ASCII logo renderer, star background (supernova/)
+components/hud/          interface kit: panels, selector, lamps, readout sections
 components/hardware/     hardware explorer (canvas, UI, part system)
   kit/                   reusable procedural parts: PCBs, chips, passives, connectors, fans, heat pipes…
   models/<device>/       one folder per device model
@@ -62,7 +66,6 @@ scripts/llm/             data prep, tokenizer and model training (PyTorch), expo
 scripts/screenshot.mjs   headless screenshots for visual checks
 scripts/smoke.mjs        end-to-end smoke test of every route
 public/llm/              the trained model (model.json, model.bin, tokenizer.json)
-public/previews/dial/    square renders shown inside the home and unit-select dials
 ```
 
 ### Hardware models

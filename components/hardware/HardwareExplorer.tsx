@@ -79,7 +79,7 @@ export default function HardwareExplorer({ device }: { device: DeviceInfo }) {
 
       <PresentationMode />
       <HudBar
-        exit={<ExitLink href="/hardware" label="All units" />}
+        exit={<ExitLink href="/" label="Home" />}
         center={
           <nav className="hud-selector" aria-label="Devices">
             {CATALOG.map((d) => (

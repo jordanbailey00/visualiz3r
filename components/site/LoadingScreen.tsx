@@ -7,7 +7,7 @@ export function HudLoader({ label }: { label: string }) {
   }).join("");
   return (
     <div className="flex flex-col items-center gap-5" role="status">
-      <svg viewBox="0 0 100 100" className="size-16 [animation:dial-spin_6s_linear_infinite]" aria-hidden>
+      <svg viewBox="0 0 100 100" className="size-16 [animation:hud-spin_6s_linear_infinite]" aria-hidden>
         <path d={ticks} stroke="rgb(186 204 224 / 0.35)" strokeWidth="1" />
         <circle cx="50" cy="50" r="46" fill="none" stroke="#38bdf8" strokeWidth="1.5" pathLength={100} strokeDasharray="18 82" />
       </svg>

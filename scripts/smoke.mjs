@@ -44,8 +44,16 @@ async function check(path, exercise) {
   await page.close();
 }
 
-await check("/");
-await check("/hardware");
+await check("/", async (page, errors) => {
+  const r = await page.evaluate(() => ({
+    logo: !!document.querySelector('svg[aria-label="visualiz3r"]'),
+    options: document.querySelectorAll('nav[aria-label="Explore"] a').length,
+    stars: document.querySelectorAll("canvas.supernova-background").length,
+  }));
+  if (!r.logo) errors.push("logo missing");
+  if (r.options !== 7) errors.push(`${r.options} options on the home page`);
+  if (r.stars !== 1) errors.push(`${r.stars} star backgrounds`);
+});
 for (const d of DEVICES) {
   await check(`/hardware/${d}`, async (page, errors) => {
     const r = await page.evaluate(async () => {

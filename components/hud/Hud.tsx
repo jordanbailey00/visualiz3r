@@ -5,11 +5,6 @@ import type { ReactNode } from "react";
 /** Zero-padded counter, e.g. 7 → "07". */
 export const pad = (n: number, width = 2) => String(n).padStart(width, "0");
 
-/** Corner marks around the whole screen, like a camera viewfinder. */
-export function Viewfinder() {
-  return <div aria-hidden className="viewfinder" />;
-}
-
 export function Lamp({ on, blink }: { on?: boolean; blink?: boolean }) {
   return <span aria-hidden className="hud-lamp" data-on={on ? "true" : undefined} data-blink={blink ? "true" : undefined} />;
 }
@@ -41,7 +36,7 @@ export function HudBar({ exit, center, caption, right }: { exit: ReactNode; cent
 export function ControlHint({ items, className = "" }: { items: [string, string][]; className?: string }) {
   return (
     <div className={`ui-chrome pointer-events-none absolute inset-x-0 z-10 flex justify-center px-4 max-sm:hidden ${className}`}>
-      <p className="hud-label flex flex-wrap justify-center gap-x-5 gap-y-1 text-[9.5px] text-hud-faint [animation:boot-fade_1.2s_ease_0.8s_both]">
+      <p className="hud-label flex flex-wrap justify-center gap-x-5 gap-y-1 text-[9.5px] text-hud-faint [animation:hud-fade_1.2s_ease_0.8s_both]">
         {items.map(([k, v]) => (
           <span key={k}>
             <span className="text-hud-dim">{k}</span> · {v}
