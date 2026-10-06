@@ -1,0 +1,9 @@
+node_modules
+.next
+.archive
+.screenshots
+scripts/llm/data
+scripts/llm/checkpoints
+**/__pycache__
+*.tsbuildinfo
+.env*
