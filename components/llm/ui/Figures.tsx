@@ -116,8 +116,8 @@ export function TemperatureFigure({ ctx }: { ctx: Ctx }) {
                   <span className="truncate">{showTokenPlain(ctx.tokenizer.tokenString(id))}</span>
                   <span>{pct(dists[k][id], 0)}</span>
                 </div>
-                <div className="h-1.5 rounded-full bg-white/[0.06]">
-                  <div className="h-full rounded-full bg-emerald-400" style={{ width: `${dists[k][id] * 100}%` }} />
+                <div className="h-1.5 bg-white/[0.06]">
+                  <div className="h-full bg-emerald-400" style={{ width: `${dists[k][id] * 100}%` }} />
                 </div>
               </div>
             ))}
