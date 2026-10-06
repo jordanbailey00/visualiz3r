@@ -4,6 +4,8 @@ import * as THREE from 'three';
 // star volume, perspective, circular particles, additive blending, fog, and
 // rotation rates; only the React wrapper has been replaced.
 const PARTICLES_COUNT = 5000;
+/** visualiz3r: the sphere turns at 40% of the original rate. */
+const SPIN = 0.4;
 
 function createStarPositions() {
   const positions = new Float32Array(PARTICLES_COUNT * 3);
@@ -65,9 +67,9 @@ export function createStarfield({ document, window }) {
   function animate(now) {
     const delta = previous === null ? 0 : Math.min((now - previous) / 1000, 0.1);
     previous = now;
-    stars.rotation.y += delta * 0.015;
-    stars.rotation.x += delta * 0.005;
-    stars.rotation.z += delta * 0.002;
+    stars.rotation.y += delta * 0.015 * SPIN;
+    stars.rotation.x += delta * 0.005 * SPIN;
+    stars.rotation.z += delta * 0.002 * SPIN;
     renderer.render(scene, camera);
     frame = window.requestAnimationFrame(animate);
   }
