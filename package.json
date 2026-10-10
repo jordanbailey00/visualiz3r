@@ -1,6 +1,7 @@
 {
   "name": "visualiz3r",
   "version": "0.2.0",
+  "license": "UNLICENSED",
   "private": true,
   "scripts": {
     "dev": "next dev --hostname 0.0.0.0 --port 4173",
