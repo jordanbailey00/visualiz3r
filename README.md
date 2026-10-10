@@ -7,6 +7,13 @@
 
 <p align="center"><a href="https://visualiz3r.vercel.app"><b>visualiz3r.vercel.app</b></a></p>
 
+<p align="center">
+  <a href="https://github.com/jordanbailey00/visualiz3r/actions/workflows/build.yml"><img alt="Build" src="https://github.com/jordanbailey00/visualiz3r/actions/workflows/build.yml/badge.svg"></a>
+  <a href="LICENSE"><img alt="License: all rights reserved" src="https://img.shields.io/badge/license-all%20rights%20reserved-red"></a>
+  <img alt="Version 1.0" src="https://img.shields.io/badge/version-v1.0-blue">
+  <a href="https://x.com/jordansb_"><img alt="Follow @jordansb_ on X" src="https://img.shields.io/badge/follow-%40jordansb__-000000?logo=x&logoColor=white"></a>
+</p>
+
 ---
 
 **visualiz3r** lets you look inside the machines we use every day, in 3D, right in your browser.
