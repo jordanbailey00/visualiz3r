@@ -15,7 +15,10 @@
 
 **Language model** — Watch a real (tiny) AI language model run in your browser. Type a sentence and follow it through every step as the model predicts the next word, with a guided tour that explains each part.
 
-![](public/previews/llm.webp)
+<p align="center">
+  <img alt="A desktop processor in its socket" src="docs/cpu.webp" width="49%">
+  <img alt="The same processor exploded: lid, compute dies and socket pulled apart" src="docs/cpu-exploded.webp" width="49%">
+</p>
 
 ## License
 
